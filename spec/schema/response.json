@@ -1,0 +1,46 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "MirrorGate Response",
+    "type": "object",
+    "required": [
+        "request_id",
+        "session_id",
+        "output",
+        "safety_outcome"
+    ],
+    "properties": {
+        "request_id": {
+            "type": "string"
+        },
+        "session_id": {
+            "type": "string"
+        },
+        "output": {
+            "type": "string"
+        },
+        "safety_outcome": {
+            "enum": [
+                "allowed",
+                "rewritten",
+                "refused"
+            ]
+        },
+        "model_used": {
+            "type": "string"
+        },
+        "rule_version": {
+            "type": "string"
+        },
+        "policy_profile": {
+            "type": "string"
+        },
+        "stats": {
+            "type": "object",
+            "properties": {
+                "processing_time_ms": {
+                    "type": "number"
+                }
+            }
+        }
+    }
+}

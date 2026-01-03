@@ -1,0 +1,22 @@
+# Environment
+.env
+*.local
+
+# Dependencies
+node_modules/
+venv/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+logs/
+*.log
+
+# Build
+dist/
+build/
+*.egg-info/
+__pycache__/

@@ -1,0 +1,64 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "MirrorGate Request",
+    "type": "object",
+    "required": [
+        "session_id",
+        "request_id",
+        "timestamp",
+        "input"
+    ],
+    "properties": {
+        "session_id": {
+            "type": "string"
+        },
+        "request_id": {
+            "type": "string"
+        },
+        "timestamp": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "mode": {
+            "enum": [
+                "local",
+                "cloud"
+            ],
+            "default": "local"
+        },
+        "profile": {
+            "type": "string",
+            "default": "DEFAULT"
+        },
+        "intent": {
+            "type": "string"
+        },
+        "input": {
+            "type": "string"
+        },
+        "metadata": {
+            "type": "object",
+            "properties": {
+                "origin": {
+                    "type": "string"
+                },
+                "user_agent": {
+                    "type": "string"
+                }
+            }
+        },
+        "consent": {
+            "type": "object",
+            "properties": {
+                "save_to_vault": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "log_opt_in": {
+                    "type": "boolean",
+                    "default": false
+                }
+            }
+        }
+    }
+}
