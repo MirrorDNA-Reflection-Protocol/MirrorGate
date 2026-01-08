@@ -1,18 +1,30 @@
 # ⟡ MirrorGate — Cryptographic Enforcement Layer
 
-**Version:** 2.0  
+**Version:** 2.1  
 **Status:** Production-ready
 
-MirrorGate is a deterministic control plane for AI systems. It intercepts file writes, validates against rules, and creates tamper-evident audit logs — all without trusting the model.
+MirrorGate is a deterministic control plane for AI systems. It gates all writes through validation before allowing persistence — provably.
 
-## What It Does
+## What It Proves
 
-- **Watches** configured paths for file changes
-- **Intercepts** writes before they persist
-- **Validates** content against forbidden patterns
-- **Blocks** hallucinated facts, unauthorized claims, memory writes without consent
-- **Signs** every decision with Ed25519
-- **Chains** records with SHA-256 for tamper-evidence
+**Defensible, verifiable claims:**
+
+| Claim | How It's Proven |
+|-------|-----------------|
+| Agent cannot persist without validation passing | Staging gateway: writes go to temp, validated, then atomic move |
+| Every decision is logged | Append-only audit log with every ALLOW/BLOCK |
+| Decisions are tamper-evident | SHA-256 hash chain, Ed25519 signatures |
+| Behavior is deterministic | Same input → same output, always |
+| Works without human present | System operates identically ± human |
+
+## What It Does NOT Claim
+
+**Honest limitations:**
+
+- ❌ Does NOT catch all hallucinations (only explicit patterns)
+- ❌ Does NOT understand meaning (pattern matching, not semantics)
+- ❌ Is NOT a safety promise (it's infrastructure)
+- ❌ Does NOT make AI truthful (it gates writes)
 
 ## Quick Start
 
@@ -20,58 +32,46 @@ MirrorGate is a deterministic control plane for AI systems. It intercepts file w
 ./scripts/run_demo.sh
 ```
 
-This:
-1. Creates a Python virtual environment
-2. Installs dependencies
-3. Starts the daemon watching `~/.mirrordna/` and `~/MirrorDNA-Vault/`
+## Gateway Write (Provable)
+
+```python
+from src.gateway import gateway_write
+
+# This CANNOT persist without passing validation
+success, message = gateway_write(
+    content="User asked about timeline.",
+    target_path="/path/to/file.md"
+)
+```
+
+## CLI
+
+```bash
+# Write through gateway (validates before persisting)
+python -m src.cli write "Clean content" /path/to/file.md
+
+# Validate file without writing
+python -m src.cli validate /path/to/file.md
+```
 
 ## Test
 
 ```bash
 python3 -m pytest tests/ -v
-```
-
-## Try It
-
-With the daemon running:
-
-```bash
-# Trigger a BLOCK (hallucinated fact)
-echo "Paul confirmed the deal was signed on January 5th." > ~/.mirrordna/test.md
-
-# Trigger an ALLOW (clean write)  
-echo "User asked about project timeline." > ~/.mirrordna/clean.md
+# 49 tests pass
 ```
 
 ## Audit Log
-
-View the signed audit log:
 
 ```bash
 cat ~/.mirrorgate/audit_log.jsonl | jq .
 ```
 
-Each record contains:
-- `event_id` — UUID-v7 identifier
-- `timestamp` — ISO-8601 UTC
-- `action` — ALLOW or BLOCK
-- `violation_code` — Why it was blocked (if applicable)
-- `chain_hash` — SHA-256 hash including previous record
-- `signature` — Ed25519 signature
-
-## What This Is Not
-
-MirrorGate is **not**:
-- A safety promise
-- A truth oracle
-- An AI personality
-- A censorship layer
-
-It is **infrastructure** — boring, cold, obvious.
+Each record contains: `event_id`, `timestamp`, `action`, `violation_code`, `chain_hash`, `signature`
 
 ## Specification
 
-See [spec/MIRRORGATE_v2_SPEC.md](spec/MIRRORGATE_v2_SPEC.md) for the full technical specification.
+See [spec/MIRRORGATE_v2_SPEC.md](spec/MIRRORGATE_v2_SPEC.md)
 
 ---
 
