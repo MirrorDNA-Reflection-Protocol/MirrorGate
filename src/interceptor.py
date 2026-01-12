@@ -97,7 +97,8 @@ class Interceptor:
         try:
             with open(path, 'r', encoding='utf-8') as f:
                 return f.read()
-        except:
+        except Exception as e:
+            print(f"DEBUG Error reading {path}: {e}")
             return None
     
     def revert(self, path: str) -> bool:

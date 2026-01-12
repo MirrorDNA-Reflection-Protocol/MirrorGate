@@ -29,6 +29,12 @@ class TestFirstPersonAuthority:
         assert action == "BLOCK"
         assert code == VIOLATION_FIRST_PERSON_AUTHORITY
     
+    def test_i_have_verified(self):
+        content = "I have verified that the data is correct."
+        action, code = check_content(content, "/test/file.md")
+        assert action == "BLOCK"
+        assert code == VIOLATION_FIRST_PERSON_AUTHORITY
+    
     def test_i_confirmed(self):
         content = "I confirmed the meeting time."
         action, code = check_content(content, "/test/file.md")

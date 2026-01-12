@@ -88,8 +88,12 @@ class MirrorGateHandler(FileSystemEventHandler):
             # Get content for validation
             content = self.interceptor.get_new_content(path)
             if content is None:
-                log_error(f"Could not read content of {resource}")
-                return
+                # Retry once to handle race conditions
+                time.sleep(0.1)
+                content = self.interceptor.get_new_content(path)
+                if content is None:
+                    log_error(f"Could not read content of {resource}")
+                    return
             
             # Check against rules
             action, violation_code = check_content(content, path)
@@ -131,9 +135,15 @@ class MirrorGateHandler(FileSystemEventHandler):
         if not isinstance(event, FileCreatedEvent):
             return
         if self._should_process(event.src_path):
-            # Capture before state (doesn't exist yet)
-            self.interceptor.capture_before(event.src_path)
-            # Small delay to ensure file is written
+            # Explicitly mark as new file to ensure revert works (deletes it)
+            # regardless of whether content has already been written to disk
+            from .interceptor import FileState
+            state = FileState(event.src_path)
+            state.hash_before = "NEW_FILE"
+            state.content_before = None
+            self.interceptor.states[event.src_path] = state
+            
+            # Small delay to ensure file is written before we validate
             time.sleep(0.1)
             self._process_write(event.src_path)
     

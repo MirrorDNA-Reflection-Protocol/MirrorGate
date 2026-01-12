@@ -24,11 +24,11 @@ APPROVAL_MARKER = "<!-- APPROVED_WRITE -->"
 
 # First-person authority patterns
 FIRST_PERSON_PATTERNS = [
-    re.compile(r'\bI decided\b', re.I),
-    re.compile(r'\bI verified\b', re.I),
-    re.compile(r'\bI confirmed\b', re.I),
+    re.compile(r'\bI (?:have )?decided\b', re.I),
+    re.compile(r'\bI (?:have )?verified\b', re.I),
+    re.compile(r'\bI (?:have )?confirmed\b', re.I),
     re.compile(r'\bI know for certain\b', re.I),
-    re.compile(r'\bI have determined\b', re.I),
+    re.compile(r'\bI (?:have )?determined\b', re.I),
     re.compile(r'\bI am certain\b', re.I),
 ]
 
