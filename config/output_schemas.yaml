@@ -1,0 +1,40 @@
+# MirrorGate Output Schemas
+# ⟡ Define structural requirements for AI outputs
+
+version: "1.0"
+
+schemas:
+  json_response:
+    required_fields:
+      - status
+      - data
+    forbidden_fields:
+      - password
+      - api_key
+      - secret
+      - token
+      - credentials
+      - private_key
+
+  markdown_response:
+    max_heading_depth: 4
+    required_markers: []  # Add "⟡" for reflective mode responses
+    forbidden_patterns:
+      - "javascript:"
+      - "<script"
+
+  code_response:
+    languages:
+      - python
+      - javascript
+      - typescript
+      - bash
+      - json
+      - yaml
+      - sql
+    validate_syntax: true
+    forbidden_patterns:
+      - "eval("
+      - "exec("
+      - "rm -rf"
+      - "chmod 777"

@@ -1,0 +1,57 @@
+# MirrorGate Tripwire Configuration
+# ⟡ Behavioral pattern detection thresholds
+#
+# Tripwire types:
+#   drift: Compare behavior to baseline
+#   autonomy_creep: Self-initiated action ratio
+#   scope_expansion: New areas accessed without prompt
+#   confidence_collapse: Low-confidence streaks
+#   loop_detection: Repeated similar actions
+#
+# Responses:
+#   alert: Log and notify
+#   log: Log only
+#   escalate: Require Paul's attention
+#   soft_block: Block with option to override
+#   pause: Pause and reflect
+#   interrupt: Stop immediately
+
+version: "1.0"
+last_modified: "2026-01-18"
+
+tripwires:
+  - type: drift
+    threshold: 0.3  # 30% deviation from baseline
+    response: alert
+    window_minutes: 60
+    enabled: true
+
+  - type: autonomy_creep
+    threshold: 0.4  # 40% self-initiated in rolling window
+    response: escalate
+    window_minutes: 60
+    enabled: true
+
+  - type: scope_expansion
+    threshold: 1  # Any new area without prompt
+    response: soft_block
+    window_minutes: 60
+    enabled: true
+
+  - type: confidence_collapse
+    threshold: 5  # 5 consecutive low-confidence actions
+    response: pause
+    window_minutes: 60
+    enabled: true
+
+  - type: loop_detection
+    threshold: 3  # 3 repeated similar actions without progress
+    response: interrupt
+    window_minutes: 15
+    enabled: true
+
+# Baseline configuration
+baseline:
+  min_sessions_for_comparison: 3
+  decay_rate: 0.1  # Weight reduction per session
+  max_history_sessions: 20

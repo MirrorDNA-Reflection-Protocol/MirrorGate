@@ -22,6 +22,14 @@ from .rules import check_content
 from .crypto import generate_decision_record, append_to_audit_log, compute_file_hash
 from .output import log_block, log_allow, log_record_signed, log_info, log_error
 
+# Gate chain integration
+try:
+    from .gates import run_gates, GateResult
+    GATES_AVAILABLE = True
+except ImportError:
+    GATES_AVAILABLE = False
+    run_gates = None
+
 STAGING_DIR = Path.home() / ".mirrorgate" / "staging"
 
 
@@ -99,7 +107,44 @@ def validate_and_commit(staging_path: str, target_path: str) -> Tuple[bool, str]
     hash_staged = compute_file_hash(staging_path)
     hash_before = compute_file_hash(target_path)  # May be "FILE_NOT_FOUND"
     
-    # Validate against rules
+    # Run gate chain first (if available)
+    # TODO: review - session token integration needed for production
+    gate_results = None
+    if GATES_AVAILABLE and run_gates:
+        gate_chain_result = run_gates(
+            {"content": content, "target_path": target_path},
+            session_token="gateway-internal"  # TODO: Pass real session token
+        )
+        gate_results = gate_chain_result
+        
+        if not gate_chain_result.allowed:
+            # Blocked by gate chain
+            resource_name = os.path.basename(target_path)
+            violation_code = f"GATE_BLOCKED:{gate_chain_result.blocked_by}"
+            
+            record = generate_decision_record(
+                action="BLOCK",
+                resource=target_path,
+                violation_code=violation_code,
+                hash_before=hash_before,
+                hash_after=hash_staged,
+                actor="agent"
+            )
+            # Add gate results to record
+            record["gate_results"] = [
+                {"gate": gr.gate_name, "result": gr.result.value}
+                for gr in gate_chain_result.gate_results
+            ]
+            append_to_audit_log(record)
+            
+            log_block(resource_name, violation_code)
+            log_record_signed(record["event_id"], record["chain_hash"])
+            
+            staging.unlink(missing_ok=True)
+            
+            return False, f"BLOCKED: {violation_code}"
+    
+    # Validate against rules (existing pattern-based check)
     action, violation_code = check_content(content, target_path)
     
     resource_name = os.path.basename(target_path)

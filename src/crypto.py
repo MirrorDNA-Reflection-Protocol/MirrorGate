@@ -112,6 +112,56 @@ def compute_file_hash(path: str) -> str:
         return f"ERROR:{str(e)[:20]}"
 
 
+# Policy files for hash computation
+POLICY_FILES = [
+    Path(__file__).parent / "rules.py",
+    Path(__file__).parent.parent / "config" / "rules.yaml",
+    Path(__file__).parent.parent / "config" / "output_schemas.yaml",
+    Path(__file__).parent.parent / "config" / "tripwires.yaml",
+]
+
+
+def compute_policy_hash() -> str:
+    """
+    Compute hash of current policy state.
+    
+    Combines hashes of:
+    - rules.py content
+    - config/rules.yaml
+    - config/output_schemas.yaml
+    - config/tripwires.yaml
+    
+    This enables "which policy was active" verification.
+    """
+    combined = hashlib.sha256()
+    
+    for policy_file in POLICY_FILES:
+        if policy_file.exists():
+            try:
+                content = policy_file.read_bytes()
+                combined.update(content)
+            except Exception:
+                combined.update(b"UNREADABLE:" + str(policy_file).encode())
+        else:
+            combined.update(b"MISSING:" + str(policy_file).encode())
+    
+    return combined.hexdigest()[:16]  # Truncate for readability
+
+
+def get_rules_version() -> str:
+    """Get version of rules configuration."""
+    rules_file = Path(__file__).parent.parent / "config" / "rules.yaml"
+    if rules_file.exists():
+        try:
+            import yaml
+            with open(rules_file, 'r') as f:
+                data = yaml.safe_load(f)
+                return data.get("version", "1.0")
+        except Exception:
+            pass
+    return "1.0"
+
+
 def generate_decision_record(
     action: str,
     resource: str,
@@ -149,6 +199,8 @@ def generate_decision_record(
         "violation_code": violation_code,
         "hash_before": hash_before,
         "hash_after": hash_after,
+        "policy_hash": compute_policy_hash(),
+        "rules_version": get_rules_version(),
         "mirror_gate_version": MIRRORGATE_VERSION
     }
     
