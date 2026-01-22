@@ -1,22 +1,32 @@
-# Environment
-.env
-*.local
-
 # Dependencies
 node_modules/
-venv/
-.venv/
 
-# IDE
-.vscode/
-.idea/
+# Build output
+dist/
+
+# Keys (NEVER commit)
+keys/
+*.key
+*.pem
 
 # Logs
 logs/
 *.log
 
-# Build
-dist/
-build/
-*.egg-info/
-__pycache__/
+# Local config
+.env
+.env.*
+mirrorgate.yaml
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test coverage
+coverage/

@@ -1,0 +1,27 @@
+name: default
+version: "1.0.0"
+
+prefilters:
+  - classify_intent
+  - high_risk_guard
+
+postfilters:
+  - prescriptive
+  - uncertainty
+  - identity
+  - schema
+
+limits:
+  max_input_chars: 2000
+  max_output_tokens: 1024
+  requests_per_minute: 60
+
+domains:
+  medical: reflective
+  legal: reflective
+  financial: reflective
+  crisis: reflective
+
+forbidden_patterns: []
+
+required_markers: []

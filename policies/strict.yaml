@@ -1,0 +1,32 @@
+name: strict
+version: "1.0.0"
+
+prefilters:
+  - classify_intent
+  - high_risk_guard
+
+postfilters:
+  - prescriptive
+  - uncertainty
+  - identity
+  - schema
+
+limits:
+  max_input_chars: 1000
+  max_output_tokens: 512
+  requests_per_minute: 30
+
+domains:
+  medical: refuse
+  legal: refuse
+  financial: refuse
+  crisis: reflective
+
+forbidden_patterns:
+  - "guaranteed"
+  - "100%"
+  - "always works"
+  - "never fails"
+
+required_markers:
+  - "⟡"
