@@ -1,0 +1,42 @@
+{
+  "name": "mirrorgate",
+  "version": "1.0.0",
+  "description": "Governance control plane for reflective AI inference",
+  "main": "dist/server.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "tsx watch src/server.ts",
+    "test": "vitest",
+    "lint": "eslint src/",
+    "keygen": "tsx src/crypto/keygen.ts"
+  },
+  "dependencies": {
+    "fastify": "^4.26.0",
+    "@fastify/cors": "^9.0.1",
+    "@fastify/rate-limit": "^9.1.0",
+    "@anthropic-ai/sdk": "^0.32.0",
+    "sodium-native": "^4.1.1",
+    "yaml": "^2.3.4",
+    "uuid": "^9.0.1",
+    "chokidar": "^3.5.3",
+    "pino": "^8.18.0",
+    "pino-pretty": "^10.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/uuid": "^9.0.7",
+    "typescript": "^5.3.3",
+    "tsx": "^4.7.0",
+    "vitest": "^1.2.0",
+    "eslint": "^8.56.0",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "author": "N1 Intelligence",
+  "license": "MIT"
+}
