@@ -6,7 +6,7 @@ import { resolve } from 'path';
 import { homedir } from 'os';
 import { parse as parseYaml } from 'yaml';
 import { v4 as uuidv4 } from 'uuid';
-import pino from 'pino';
+import { pino } from 'pino';
 
 import type { ReflectRequest, ReflectResponse, PolicyProfile, GateContext } from './types/index.js';
 import { SAFE_REFUSAL } from './types/index.js';
@@ -134,7 +134,10 @@ async function main() {
   const transportConfig: TransportConfig = {
     apiKeys: new Set(config.auth.api_keys),
     allowedOrigins: config.auth.allowed_origins,
-    rateLimits: config.rate_limits
+    rateLimits: {
+      requestsPerSecond: config.rate_limits.requests_per_second,
+      maxInputChars: config.rate_limits.max_input_chars
+    }
   };
 
   const inferenceRouter = new InferenceRouter(config.inference.backends, config.inference.default);

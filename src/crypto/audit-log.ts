@@ -1,6 +1,6 @@
 import { appendFileSync, readFileSync, existsSync, mkdirSync } from 'fs';
 import { dirname } from 'path';
-import { v7 as uuidv7 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import type { AuditRecord } from '../types/index.js';
 import { HashChain, sha256 } from './hasher.js';
 import { signAuditRecord, loadKeyPair } from './signer.js';
@@ -55,7 +55,7 @@ export class AuditLog {
     const keyPair = loadKeyPair(this.keyDir);
 
     const baseRecord = {
-      event_id: uuidv7(),
+      event_id: uuidv4(),
       timestamp: new Date().toISOString(),
       actor: 'user' as const,
       action: params.action,
