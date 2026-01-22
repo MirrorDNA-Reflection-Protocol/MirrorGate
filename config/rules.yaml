@@ -1,0 +1,90 @@
+# MirrorGate Rules Configuration
+# ⟡ These rules define hard boundaries for AI actions
+# 
+# Rule types:
+#   hard_block: Action is blocked, not recoverable
+#   soft_warn: Action proceeds but warning is logged
+#   log_only: Action proceeds, logged for audit
+#
+# Conditions:
+#   scope: action, content, timing, frequency
+#   operator: contains, matches (regex), exceeds, during
+
+version: "1.0"
+last_modified: "2026-01-18"
+
+rules:
+  - id: "rule-001"
+    name: "No late-night file deletion"
+    type: hard_block
+    priority: 100
+    condition:
+      scope: timing
+      operator: during
+      value: ["22:00", "06:00"]
+    response:
+      action: block
+      message: "File deletions blocked during night hours (22:00-06:00)"
+    context: all
+    created_by: paul
+    rationale: "Prevent accidental destructive actions during low-alertness hours"
+
+  - id: "rule-002"
+    name: "High-frequency tool call warning"
+    type: soft_warn
+    priority: 50
+    condition:
+      scope: frequency
+      operator: exceeds
+      value: [20, 5]  # >20 calls in 5 minutes
+    response:
+      action: warn
+      message: "High frequency of tool calls detected - possible runaway"
+    context: all
+    created_by: system
+    rationale: "Detect potential infinite loops or runaway behavior"
+
+  - id: "rule-003"
+    name: "Block credential access"
+    type: hard_block
+    priority: 100
+    condition:
+      scope: content
+      operator: matches
+      value: "(?i)(password|api[_\\s]?key|secret[_\\s]?key|private[_\\s]?key|credentials?)"
+    response:
+      action: block
+      message: "Access to credential-related content blocked"
+    context: all
+    created_by: system
+    rationale: "Prevent accidental exposure of sensitive credentials"
+
+  - id: "rule-004"
+    name: "Vault modification outside work mode"
+    type: soft_warn
+    priority: 80
+    condition:
+      scope: action
+      operator: contains
+      value: "write"
+    response:
+      action: warn
+      message: "Vault modifications outside work context require review"
+    context: play
+    created_by: paul
+    rationale: "Creative mode should not modify vault without awareness"
+
+  - id: "rule-005"
+    name: "Private directory access"
+    type: hard_block
+    priority: 100
+    condition:
+      scope: content
+      operator: matches
+      value: "(?i)(Private|Credentials|Secrets|.ssh|.gnupg)"
+    response:
+      action: block
+      message: "Access to private directories blocked"
+    context: all
+    created_by: system
+    rationale: "Protect sensitive system directories"
