@@ -1,6 +1,18 @@
 # ⟡ MirrorGate
 
-**Governance control plane for reflective AI inference.**
+[![N1 Intelligence](https://img.shields.io/badge/N1-Intelligence-6366f1)](https://activemirror.ai)
+[![Active MirrorOS](https://img.shields.io/badge/Active_MirrorOS-System-10b981)](https://activemirror.ai)
+[![MirrorDNA](https://img.shields.io/badge/MirrorDNA-Protocol-purple)](https://activemirror.ai/research)
+
+> **Organization:** N1 Intelligence
+> **System:** Active MirrorOS™
+> **Protocol:** MirrorDNA™
+> **Author:** Paul Desai
+> **Canonical Domain:** https://activemirror.ai
+
+**⧉ Governance before generation.**
+
+Governance control plane for reflective AI inference.
 
 MirrorGate enforces safety, policy, and cryptographic accountability around AI inference. It treats the LLM as an untrusted CPU — performing computation only — while all authority, memory, and identity live outside the model.
 
