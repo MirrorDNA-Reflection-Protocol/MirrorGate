@@ -1,16 +1,28 @@
 # ⟡ MirrorGate
 
-[![N1 Intelligence](https://img.shields.io/badge/N1-Intelligence-6366f1)](https://activemirror.ai)
-[![Active MirrorOS](https://img.shields.io/badge/Active_MirrorOS-System-10b981)](https://activemirror.ai)
-[![MirrorDNA](https://img.shields.io/badge/MirrorDNA-Protocol-purple)](https://activemirror.ai/research)
+**Sovereign Inference Control Plane**
 
-> **Organization:** N1 Intelligence
-> **System:** Active MirrorOS™
-> **Protocol:** MirrorDNA™
-> **Author:** Paul Desai
-> **Canonical Domain:** https://activemirror.ai
+> ⧉ Governance before generation.
 
-**⧉ Governance before generation.**
+[![MirrorDNA](https://img.shields.io/badge/MirrorDNA-Protocol-purple)](https://github.com/MirrorDNA-Reflection-Protocol)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17787619.svg)](https://doi.org/10.5281/zenodo.17787619)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
+
+Policy-driven proxy that governs AI requests **before** they execute. Safety by design, not by hope.
+
+---
+
+## What This Is NOT
+
+- ❌ **Not prompt engineering** — This is infrastructure-level control
+- ❌ **Not content moderation** — This is pre-inference policy enforcement
+- ❌ **Not an AI wrapper** — This is a cryptographically auditable control plane
+- ❌ **Not optional safety** — Fail-closed by default, no bypass
+
+---
+
+## What This IS
 
 Governance control plane for reflective AI inference.
 
@@ -172,6 +184,20 @@ Verify the audit chain:
 
 ---
 
-Part of the MirrorDNA Standard.
+## MirrorDNA Ecosystem
 
-⟡ Infrastructure, not alignment.
+MirrorGate is part of the **MirrorDNA** ecosystem for sovereign AI:
+
+| Component | Description | Link |
+|-----------|-------------|------|
+| **MirrorDNA Standard** | Constitutional anchor for reflective AI | [GitHub](https://github.com/MirrorDNA-Reflection-Protocol/MirrorDNA-Standard) |
+| **SCD Protocol** | Deterministic state management | [GitHub](https://github.com/MirrorDNA-Reflection-Protocol/SCD-Protocol) |
+| **MirrorBrain** | Local-first orchestration runtime | [GitHub](https://github.com/MirrorDNA-Reflection-Protocol/MirrorBrain) |
+| **Active Mirror Identity** | Portable AI identity (Mirror Seed) | [GitHub](https://github.com/MirrorDNA-Reflection-Protocol/active-mirror-identity) |
+| **MirrorGate** | Inference control plane (you are here) | — |
+| **Glyph Engine** | Cryptographic attestation | [GitHub](https://github.com/MirrorDNA-Reflection-Protocol/glyph-engine) |
+
+---
+
+**⟡ Built by [MirrorDNA](https://github.com/MirrorDNA-Reflection-Protocol)**
+*Infrastructure, not alignment. Governance before generation.*
