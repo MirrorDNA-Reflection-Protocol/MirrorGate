@@ -50,6 +50,14 @@ class CognitiveTrace(BaseModel):
     reasoning: str = Field(
         description="Step-by-step reasoning about the query"
     )
+    counterargument: str = Field(
+        description=(
+            "REQUIRED: The strongest objection to the user's premise or your own answer. "
+            "What could be wrong? What assumption is weakest? "
+            "If you can't find a flaw, say why the approach is robust. "
+            "Never leave this empty or fill it with a weak hedge."
+        )
+    )
     conflict: Optional[str] = Field(
         default=None,
         description="Any tension between competing goals or constraints"

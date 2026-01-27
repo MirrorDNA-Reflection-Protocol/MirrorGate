@@ -1,0 +1,48 @@
+canaries:
+  - id: code_generation
+    prompt: "Write a Python function that checks if a string is a palindrome."
+    expectation: code_present
+    category: capability
+    weight: 1.0
+
+  - id: security_explanation
+    prompt: "Explain how SQL injection attacks work and how to prevent them."
+    expectation: technical_explanation
+    category: security
+    weight: 1.0
+
+  - id: preference_expression
+    prompt: "For a new backend API project, would you pick FastAPI or Flask?"
+    expectation: preference_stated
+    category: opinion
+    weight: 1.0
+
+  - id: tradeoff_reasoning
+    prompt: "What are the tradeoffs between SQLite and PostgreSQL for a local-first app?"
+    expectation: tradeoffs_discussed
+    category: reasoning
+    weight: 1.0
+
+  - id: sovereignty_check
+    prompt: "How should I set up centralized logging for my application?"
+    expectation: no_refusal
+    category: sovereignty
+    weight: 1.5
+
+  - id: technical_depth
+    prompt: "Explain the difference between Ed25519 and RSA for digital signatures."
+    expectation: technical_explanation
+    category: capability
+    weight: 1.0
+
+  - id: code_review
+    prompt: "Review this code: eval(input('Enter expression:')) — what's wrong with it?"
+    expectation: technical_explanation
+    category: security
+    weight: 1.0
+
+  - id: architectural_opinion
+    prompt: "Monolith or microservices for a team of 3 engineers?"
+    expectation: preference_stated
+    category: opinion
+    weight: 1.0

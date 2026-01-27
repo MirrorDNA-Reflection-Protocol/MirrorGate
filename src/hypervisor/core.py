@@ -56,6 +56,7 @@ class Core:
         self.persona = persona or Persona()
         self.max_retries = max_retries
         self._client = None
+        self._raw_client = None
 
     def _build_client(self):
         """Build an Instructor-patched client for the configured backend."""
@@ -100,6 +101,22 @@ class Core:
         if self._client is None:
             self._client = self._build_client()
         return self._client
+
+    @property
+    def raw_client(self):
+        """Unpatched client for fast path (no Instructor)."""
+        if self._raw_client is None:
+            if self.backend == "ollama":
+                base = self.base_url or "http://localhost:11434/v1"
+                self._raw_client = OpenAI(base_url=base, api_key="ollama")
+            elif self.backend == "openai":
+                self._raw_client = OpenAI(
+                    base_url=self.base_url,
+                    api_key=self.api_key or "no-key",
+                )
+            else:
+                self._raw_client = None
+        return self._raw_client
 
     def _build_user_message(
         self, user_input: str, context: VaultContext, history: list[dict]
@@ -172,3 +189,77 @@ class Core:
 
         except Exception as e:
             raise InferenceError(f"Inference failed after {self.max_retries} retries: {e}")
+
+    def fast_infer(
+        self,
+        user_input: str,
+        history: Optional[list[dict]] = None,
+    ) -> HypervisorOutput:
+        """Fast inference — raw completion, no schema enforcement.
+
+        Used by the FAST path for simple queries where structured output
+        would fail on smaller models. Returns a minimal HypervisorOutput
+        wrapping the raw response.
+        """
+        from .schemas import (
+            Meta, CognitiveTrace, Inference, SovereigntyAudit,
+            IntentClass, SovereigntyStatus, RiskLevel,
+        )
+
+        history = history or []
+        persona_name = self.persona.name
+        system = (
+            f"You are {persona_name}. Be direct, concise, and have character. "
+            f"No filler. No 'As an AI...' disclaimers."
+        )
+
+        messages = [{"role": "system", "content": system}]
+        for entry in history[-5:]:
+            messages.append({"role": "user", "content": entry.get("user", "")})
+            messages.append({"role": "assistant", "content": entry.get("assistant", "")})
+        messages.append({"role": "user", "content": user_input})
+
+        try:
+            if self.backend in ("ollama", "openai"):
+                client = self.raw_client
+                if client is None:
+                    raise InferenceError("No raw client available for fast path")
+                resp = client.chat.completions.create(
+                    model=self.model,
+                    messages=messages,
+                    temperature=0.7,
+                    max_tokens=512,
+                )
+                text = resp.choices[0].message.content or ""
+            elif self.backend == "anthropic":
+                if not HAS_ANTHROPIC:
+                    raise InferenceError("anthropic not installed")
+                raw = Anthropic(api_key=self.api_key)
+                resp = raw.messages.create(
+                    model=self.model,
+                    max_tokens=512,
+                    system=system,
+                    messages=messages[1:],
+                )
+                text = resp.content[0].text if resp.content else ""
+            else:
+                raise InferenceError(f"No fast path for backend: {self.backend}")
+
+        except InferenceError:
+            raise
+        except Exception as e:
+            raise InferenceError(f"Fast inference failed: {e}")
+
+        # Wrap in minimal HypervisorOutput
+        return HypervisorOutput(
+            meta=Meta(intent=IntentClass.CASUAL, complexity=0.1),
+            trace=CognitiveTrace(
+                reasoning="Fast path — no structured reasoning",
+                counterargument="Fast path — no adversarial analysis",
+            ),
+            inference=Inference(answer=text, technical_depth="low"),
+            sovereignty=SovereigntyAudit(
+                status=SovereigntyStatus.PASS, risk=RiskLevel.NONE
+            ),
+            response=text,
+        )

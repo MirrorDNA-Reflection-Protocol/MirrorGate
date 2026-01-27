@@ -71,6 +71,7 @@ class Assembler:
     def _render_trace(self, output: HypervisorOutput) -> str:
         parts = ["\n<trace>"]
         parts.append(f"  reasoning: {output.trace.reasoning}")
+        parts.append(f"  counterargument: {output.trace.counterargument}")
         if output.trace.conflict:
             parts.append(f"  conflict: {output.trace.conflict}")
             parts.append(f"  resolution: {output.trace.resolution}")
