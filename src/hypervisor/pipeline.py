@@ -33,9 +33,7 @@ from .persona import Persona
 from .router import Router, Tier, RouteDecision
 from .sanitizer import Sanitizer, SanitizeResult
 from .canary import Canary, CanaryReport, CanaryResult, HealthStatus
-
-
-AUDIT_LOG = Path.home() / ".mirrorgate" / "logs" / "hypervisor.jsonl"
+from .crypto import AuditCrypto, VerifyResult
 
 
 @dataclass
@@ -95,6 +93,7 @@ class Pipeline:
         self.router = Router()
         self.sanitizer = Sanitizer(strict=self.config.strict_sanitizer)
         self.canary = Canary()
+        self.crypto = AuditCrypto()
 
     def run(self, user_input: str) -> PipelineResult:
         """Execute the pipeline with routing, sanitization, and full audit."""
@@ -333,8 +332,7 @@ class Pipeline:
         latency_ms: float,
         tier: str = "full",
     ):
-        """Append to the audit log with model provenance."""
-        AUDIT_LOG.parent.mkdir(parents=True, exist_ok=True)
+        """Sign and append to the audit log with Ed25519 + SHA-256 chain."""
         record = {
             "ts": int(time.time()),
             "query_hash": hashlib.sha256(user_input.encode()).hexdigest()[:16],
@@ -349,8 +347,18 @@ class Pipeline:
             "model": self.core.model,
             "backend": self.core.backend,
         }
-        with open(AUDIT_LOG, "a") as f:
-            f.write(json.dumps(record) + "\n")
+        try:
+            self.crypto.write_signed_record(record)
+        except Exception:
+            # Fallback: unsigned append if crypto fails (key issues, etc.)
+            from .crypto import AUDIT_LOG
+            AUDIT_LOG.parent.mkdir(parents=True, exist_ok=True)
+            with open(AUDIT_LOG, "a") as f:
+                f.write(json.dumps(record) + "\n")
+
+    def verify_chain(self) -> VerifyResult:
+        """Verify the integrity of the hypervisor audit log."""
+        return self.crypto.verify_chain()
 
     def _error_result(
         self, error: str, t0: float,

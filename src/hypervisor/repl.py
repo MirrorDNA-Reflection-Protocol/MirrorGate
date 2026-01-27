@@ -13,6 +13,7 @@ Commands:
   /canary    — run the sovereignty canary suite
   /evolve    — check for persona evolution proposals
   /route     — show how the last query was routed
+  /verify    — verify audit log chain integrity
   /quit      — exit
 """
 
@@ -41,6 +42,7 @@ BANNER = """
  │   /canary    — run model health check    │
  │   /evolve    — persona evolution check   │
  │   /route     — show last route decision  │
+ │   /verify    — verify audit chain        │
  │   /clear     — clear history             │
  │   /quit      — exit                      │
  └──────────────────────────────────────────┘
@@ -213,6 +215,24 @@ def run_repl(config: PipelineConfig):
                     print("  No route recorded yet.")
                 continue
 
+            elif cmd == "/verify":
+                print("  Verifying audit chain...")
+                result = pipeline.verify_chain()
+                if result.valid:
+                    print(f"  \033[32mCHAIN VALID\033[0m — {result.records_checked} records verified")
+                    if result.signature_failures > 0:
+                        print(f"  \033[33mWarning: {result.signature_failures} signature verification failures\033[0m")
+                else:
+                    print(f"  \033[31mCHAIN BROKEN\033[0m at record {result.broken_at}")
+                    print(f"  Error: {result.error}")
+                    print(f"  Records before break: {result.records_checked}")
+                # Show chain status
+                status = pipeline.crypto.get_chain_status()
+                print(f"  Records: {status['records']}")
+                print(f"  Last hash: {status['last_hash']}")
+                print(f"  Keys: {'present' if status['keys_present'] else 'MISSING'}")
+                continue
+
             elif cmd == "/clear":
                 pipeline.clear_history()
                 last_query = ""
@@ -262,10 +282,14 @@ def _print_status(pipeline: Pipeline):
     print(f"  Trace:      {'on' if pipeline.assembler.show_trace else 'off'}")
     print(f"  Audit:      {'on' if pipeline.assembler.show_audit else 'off'}")
     print(f"  Strict:     audit={pipeline.auditor.strict}")
+    # Canary
     if pipeline.canary_report:
         print(f"  Canary:     {pipeline.canary_report.status.value} ({pipeline.canary_report.score:.0f}%)")
     else:
         print(f"  Canary:     not run (use /canary)")
+    # Chain status
+    chain = pipeline.crypto.get_chain_status()
+    print(f"  Chain:      {chain['records']} signed records | keys={'yes' if chain['keys_present'] else 'NO'}")
 
 
 def _print_canary_report(report):
