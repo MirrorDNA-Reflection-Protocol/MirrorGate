@@ -158,13 +158,15 @@ module doesn't yet use it.
 - File permissions restrict write access
 - Append-only pattern (no overwrites)
 
-**Mitigation (Recommended):**
-- Integrate with existing MirrorGate crypto layer
-- SHA-256 hash chain each Hypervisor audit record
-- Ed25519 sign each record
-- Priority: HIGH — this should be implemented next
+**Mitigation (Implemented v1.1):**
+- Integrated with MirrorGate crypto layer (shared Ed25519 key pair)
+- SHA-256 hash chain: `chain_hash = SHA256(sorted_json(record) + prev_hash)`
+- Ed25519 signature on every chain_hash
+- Separate chain state for Hypervisor log (`hypervisor_chain.json`)
+- `/verify` command validates entire chain + signatures
+- Tamper detection verified: modifying any record breaks the chain
 
-**Residual Risk:** HIGH until crypto integration is complete.
+**Residual Risk:** LOW — crypto signing fully operational.
 
 ### 3.3 Local Network Exposure
 
@@ -333,7 +335,7 @@ the system reinforces existing thinking rather than challenging it.
 | 2.2 | Disk growth | MEDIUM | LOW | LOW | Rotate logs |
 | 2.3 | Ollama down | LOW | MEDIUM | LOW | LaunchAgent |
 | 3.1 | Prompt injection | MEDIUM | HIGH | MEDIUM | Sanitizer built |
-| 3.2 | Audit tampering | LOW | HIGH | **HIGH** | **Needs crypto** |
+| 3.2 | Audit tampering | LOW | HIGH | **LOW** | Crypto wired (v1.1) |
 | 3.3 | Network exposure | LOW | LOW | LOW | Localhost |
 | 3.4 | Supply chain | LOW | HIGH | LOW | Pin + audit |
 | 3.5 | Data exfiltration | LOW | MEDIUM | LOW | Output sanitizer |
@@ -348,7 +350,7 @@ the system reinforces existing thinking rather than challenging it.
 
 ## 7. OPEN ITEMS (Requires Action)
 
-1. **CRITICAL:** Integrate Hypervisor audit log with MirrorGate crypto layer (Ed25519 signing + SHA-256 chain)
+1. ~~**CRITICAL:** Integrate Hypervisor audit log with MirrorGate crypto layer~~ **DONE** (v1.1)
 2. **HIGH:** Implement log rotation for hypervisor.jsonl and canary.jsonl
 3. **MEDIUM:** Add `pip audit` to CI/boot check
 4. **MEDIUM:** Pin exact dependency versions (not minimum versions)
