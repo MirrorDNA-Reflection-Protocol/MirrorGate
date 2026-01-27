@@ -30,3 +30,9 @@ Thumbs.db
 
 # Test coverage
 coverage/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
