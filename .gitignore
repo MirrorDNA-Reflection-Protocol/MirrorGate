@@ -1,32 +1,6 @@
-# Dependencies
-node_modules/
-
-# Build output
-dist/
-
-# Keys (NEVER commit)
-keys/
-*.key
-*.pem
-
-# Logs
-logs/
-*.log
-
-# Local config
+.venv/
+venv/
+__pycache__/
+*.pyc
 .env
-.env.*
-mirrorgate.yaml
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS
 .DS_Store
-Thumbs.db
-
-# Test coverage
-coverage/
