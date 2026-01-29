@@ -1,0 +1,36 @@
+server:
+  port: 8088
+  host: "127.0.0.1"
+
+auth:
+  api_keys:
+    - "dev-key"
+  allowed_origins:
+    - "http://localhost:*"
+    - "https://activemirror.ai"
+
+rate_limits:
+  requests_per_second: 10
+  max_input_chars: 2000
+
+inference:
+  backends:
+    - name: local
+      type: ollama
+      model: alibayram/smollm3:latest
+  default: local
+
+crypto:
+  key_dir: ~/.mirrorgate/keys
+  audit_log: ~/.mirrorgate/logs/audit.jsonl
+
+policies:
+  directory: ./policies
+  default: default
+
+# Hypervisor — Assembly Line Inference Pipeline
+hypervisor:
+  persona_path: ./config/persona.yaml
+  vault_dir: ~/.mirrorgate/vault/chromadb
+  strict_audit: false
+  max_retries: 3
