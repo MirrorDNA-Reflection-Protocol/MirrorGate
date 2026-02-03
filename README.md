@@ -184,18 +184,27 @@ Verify the audit chain:
 
 ---
 
+## Production Deployment
+
+MirrorGate v11 powers the safety layer for **[Active Mirror](https://activemirror.ai)** — the consumer product with AI Twins, BrainScan, and Sovereign Mode. Live since January 2026.
+
+---
+
 ## MirrorDNA Ecosystem
 
-MirrorGate is part of the **MirrorDNA** ecosystem for sovereign AI:
+MirrorGate is part of the **MirrorDNA** ecosystem for sovereign AI (95 repos, 9 layers):
 
 | Component | Description | Link |
 |-----------|-------------|------|
+| **Active Mirror** | Consumer product (AI Twins, BrainScan) | [activemirror.ai](https://activemirror.ai) |
 | **MirrorDNA Standard** | Constitutional anchor for reflective AI | [GitHub](https://github.com/MirrorDNA-Reflection-Protocol/MirrorDNA-Standard) |
 | **SCD Protocol** | Deterministic state management | [GitHub](https://github.com/MirrorDNA-Reflection-Protocol/SCD-Protocol) |
 | **MirrorBrain** | Local-first orchestration runtime | [GitHub](https://github.com/MirrorDNA-Reflection-Protocol/MirrorBrain) |
 | **Active Mirror Identity** | Portable AI identity (Mirror Seed) | [GitHub](https://github.com/MirrorDNA-Reflection-Protocol/active-mirror-identity) |
 | **MirrorGate** | Inference control plane (you are here) | — |
 | **Glyph Engine** | Cryptographic attestation | [GitHub](https://github.com/MirrorDNA-Reflection-Protocol/glyph-engine) |
+
+**Documentation:** [MirrorDNA Docs](https://mirrordna-reflection-protocol.github.io/MirrorDNA-Docs/)
 
 ---
 
